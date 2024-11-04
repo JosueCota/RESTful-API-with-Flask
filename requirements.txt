@@ -1,0 +1,9 @@
+# For environment variables
+python-dotenv
+
+# Backend and Database Packages
+flask
+flask-mysqldb
+
+# Auth
+PyJWT
