@@ -8,16 +8,19 @@
 <body>
     <h1>Public Info Page</h1>
     <h4>List of Users: </h4>
+    <table>
     <tr>
-        <td>ID:</td>
-        <td>Username:</td>
+        <th>ID:</th>
+        <th>Username:</th>
     </tr>
+
     {% for user in data %}
         <tr>
-            <td>{{user[1]}}</td>
-            <td>{{user[2]}}</td>
+            <td>{{user.id}}</td>
+            <td>{{user.username}}</td>
         </tr>
     {% endfor %}
+    </table>
     <br><a href="/">Home Page</a>
 </body>
 </html>
