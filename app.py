@@ -159,6 +159,18 @@ def upload_file():
    
     return render_template('upload.html')
 
+# Public Route to Display Information
+@app.route("/public-info", methods=['GET'])
+def public_info():
+    try:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        # Query public data from the database
+        cursor.execute("SELECT * FROM users")
+        public_data = cursor.fetchall()
+        return render_template("publicInfo.html", data = public_data)
+    
+    except MySQLdb.Error as e:
+        return internal_err(e = "Database Error : Failed to retrieve public information")
 
 @app.route("/")
 def home():
