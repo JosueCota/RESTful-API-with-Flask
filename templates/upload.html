@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+</head>
+<body>
+    <h1>Upload a File: </h1>
+    <h4>Allowed file types: PNG, JPG/JPEG, PDF </h4>
+    <p>Max File Size: <strong>5MB</strong></p>
+    <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file"/><br>
+        <input type="submit" value="Upload"/>
+    </form>
+    {% if filename %}
+        <br><p>Successfully uploaded: <strong><em>{{ filename }}</em></strong></p>
+    {% endif %}
+
+    <br><a href="/">Home Page</a><br/>
+
+</body>
+</html>

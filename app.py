@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, jsonify, url_for, s
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import jwt
+from werkzeug.utils import secure_filename
 
 load_dotenv()
 
@@ -13,6 +14,11 @@ app.config["MYSQL_USER"] = os.getenv("DATABASE_USER")
 app.config["MYSQL_PASSWORD"] = os.getenv("DATABASE_PASSWORD")
 app.config["MYSQL_HOST"] = os.getenv("DATABASE_HOST")
 app.config["MYSQL_DB"] = os.getenv("DATABASE_NAME")
+
+#File upload configurations
+app.config["UPLOAD_FOLDER"] = "uploads"
+app.config["ALLOWED_EXTENSIONS"] = {".jpg","jpeg",".png", ".pdf"}
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB max file size
 
 mysql = MySQL(app)
 
@@ -121,6 +127,37 @@ def protect():
         except jwt.InvalidTokenError:
             return (False, "Invalid Token")
     return (False, "No Token")
+
+# Checks to see if Upload folder exists if not then creates one 
+if not os.path.exists(app.config["UPLOAD_FOLDER"]):
+    os.makedirs(app.config["UPLOAD_FOLDER"])
+
+# Function that checks for allowed File types
+def allowed_file(filename):
+    return os.path.splitext(filename)[1].lower() in app.config["ALLOWED_EXTENSIONS"]
+
+# Upload Route
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # Check if the post request has the file part
+        if 'file' not in request.files:
+            return client_err(e = "No file part in the request")
+        file = request.files['file']
+        
+        # If user does not select a file
+        if file.filename == '':
+            return client_err(e = "No selected file")
+        
+        # Validate file type and size
+        if not allowed_file(file.filename):
+            return client_err(e = "File type not allowed")
+        if file:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return render_template('upload.html', filename = filename)
+   
+    return render_template('upload.html')
 
 
 @app.route("/")
