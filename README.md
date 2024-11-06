@@ -8,7 +8,7 @@ Group Members:
 
 ## Setup 
 1. Setup python virtual environment using .venv
-2. Install all dependencies from requirements.txt folder
-3. Setup local database with username and password fields
+2. Install all dependencies from requirements.txt file
+3. Setup local sql database with username and password fields
 4. Set .env variables for database and jwt secret
 5. Run python app.py in the terminal
