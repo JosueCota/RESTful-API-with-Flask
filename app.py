@@ -3,8 +3,9 @@ import os
 from flask import Flask, render_template, request, redirect, jsonify, url_for, session, abort, make_response
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
-import jwt
+import jwt as pyjwt
 from werkzeug.utils import secure_filename
+from flask import flash
 
 load_dotenv()
 
@@ -97,7 +98,7 @@ def login():
             msg = "User doesn't exist!"
         else:
             # Create jwt and store in session variable
-            token = jwt.encode({
+            token = pyjwt.encode({
                 "username": username                
             }, app.config['SECRET_KEY'])
             session["token"] = token
@@ -120,11 +121,11 @@ def protect():
     if session.get("token") is not None:
         try:
             # Decode jwt for validity
-            jwt.decode(session.get("token"), app.config["SECRET_KEY"], algorithms=["HS256"])
+            pyjwt.decode(session.get("token"), app.config["SECRET_KEY"], algorithms=["HS256"])
             return (True, "Good Token")
-        except jwt.ExpiredSignatureError:
+        except pyjwt.ExpiredSignatureError:
             return (False, "Token Expired")
-        except jwt.InvalidTokenError:
+        except pyjwt.InvalidTokenError:
             return (False, "Invalid Token")
     return (False, "No Token")
 
@@ -171,6 +172,34 @@ def public_info():
     
     except MySQLdb.Error as e:
         return internal_err(e = "Database Error : Failed to retrieve public information")
+    
+@app.route("/delete-account", methods=["Post", "Get"])
+def delete_account():
+    # Authentication check
+    auth = protect()
+    if not auth[0]:
+        return abort(401, auth[1])
+    
+    try:
+        # decode JWT token
+        token = session.get("token")
+        decoded_token = pyjwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+        username = decoded_token.get("username")
+
+        # delete user from db
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("DELETE FROM users WHERE username = %s", [username])
+        mysql.connection.commit()
+
+        session.pop("token", None)
+        flash("Your account has been deleted successfully.")
+        return redirect(url_for("home"))
+
+    except MySQLdb.Error as e:
+        return internal_err(e="Database Error: Failed to delete account")
+    
+    except pyjwt.InvalidTokenError:
+        return abort(401, "Invalid or expired token.")
 
 @app.route("/")
 def home():

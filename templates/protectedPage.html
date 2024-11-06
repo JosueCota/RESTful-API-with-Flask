@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <p>Protected Data</p>
     <p>{{msg}}</p>
+    <br><a href="/">Home Page</a>
+    
+    <form action="/delete-account" method="POST"
+        onsubmit="return confirm('Are you sure you want to delete your account?');">
+        <button type="submit">Delete this account</button>
+    </form>
 </body>
+
 </html>
