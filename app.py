@@ -102,7 +102,7 @@ def login():
                 "username": username                
             }, app.config['SECRET_KEY'])
             session["token"] = token
-            return redirect(url_for("protectedRoute"))
+            return jsonify({"JWT": token}), 200
     return render_template("login.html", msg=msg)
 
 
