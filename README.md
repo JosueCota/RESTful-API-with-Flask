@@ -16,4 +16,4 @@ Group Members:
 ## Submission details
 [Github](https://github.com/JosueCota/RESTful-API-with-Flask) <br>
 [Submission images](https://docs.google.com/document/d/13gK_N20FSj2hyuwYEgFwO1DqH8mpnfVtM_vbUEfAXvc/edit?usp=sharing)<br>
-[Video link](https://youtu.be/1eOt_ehoUQ8) <br>
+[Video link](https://youtu.be/NmPxbPcZJbY) <br>
